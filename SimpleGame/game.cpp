@@ -9,20 +9,19 @@ hWnd(hWnd_) {
 	RECT world;
 	GetClientRect(hWnd, &world);
 
-	VECTOR gravity;
-	gravity.x = 0;
-	gravity.y = -10;
-
 	scene = new Scene(hWnd);
-	physics = new Physics(gravity, world);
+	physics = new Physics(9.8, world);
 
 	POINT ballPosition;
-	ballPosition.x = 20;
-	ballPosition.y = 30;
+	ballPosition.x = 0;
+	ballPosition.y = 340;
+	
 	auto ball = new Ball();
 	ball->SetPosition(ballPosition);
+
 	scene->AddObject(ball);
 	physics->AddObject(ball);
+	physics->Simulate(ball, 45, 45);
 }
 
 Game::~Game() {
@@ -37,7 +36,6 @@ void Game::Draw(HDC hdc) {
 void Game::MainGameLoop() {
 	InvalidateRect(hWnd,NULL,TRUE);	
 	physics->PhysicsStep();
-	//Sleep(100);
 }
 
 short int Game::GetDesiredFPS() const {

@@ -11,6 +11,7 @@ public:
 	virtual void SetPosition(POINT);
 	virtual int GetWidth() const = 0;
 	virtual int GetHeight() const = 0;
+	virtual double GetMass() const = 0;
 
 	virtual void Draw(HDC hdc) = 0;
 
