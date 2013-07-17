@@ -26,7 +26,7 @@ void Ball::drawBall(HDC hdc) {
 
 void Ball::drawTail(HDC hdc) {
 
-	HPEN redPen = HPEN(RGB(255,0,0));
+	HPEN redPen = CreatePen(PS_DOT, 1, RGB(255,0,0));
 	HGDIOBJ old = SelectObject(hdc, redPen);
 
 	Polyline(hdc, tail.data(),tail.size());

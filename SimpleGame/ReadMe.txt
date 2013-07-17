@@ -1,62 +1,20 @@
 ========================================================================
-    WIN32 APPLICATION : SimpleGame Project Overview
+			SimpleGame by I.Pirozhenko Project Overview (2013)
 ========================================================================
 
-AppWizard has created this SimpleGame application for you.
+It is a simple game which simulates throwing of a ball, created for you by I. Pirozhenko.
 
-This file contains a summary of what you will find in each of the files that
-make up your SimpleGame application.
+The game uses winAPI to create a window, and gdi to draw. It also uses separate threads for userInteraction,
+calculation of physics, and drawing.
 
-
-SimpleGame.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
-
-SimpleGame.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
-
-SimpleGame.cpp
-    This is the main application source file.
-
-/////////////////////////////////////////////////////////////////////////////
-AppWizard has created the following resources:
-
-SimpleGame.rc
-    This is a listing of all of the Microsoft Windows resources that the
-    program uses.  It includes the icons, bitmaps, and cursors that are stored
-    in the RES subdirectory.  This file can be directly edited in Microsoft
-    Visual C++.
-
-Resource.h
-    This is the standard header file, which defines new resource IDs.
-    Microsoft Visual C++ reads and updates this file.
-
-SimpleGame.ico
-    This is an icon file, which is used as the application's icon (32x32).
-    This icon is included by the main resource file SimpleGame.rc.
-
-small.ico
-    This is an icon file, which contains a smaller version (16x16)
-    of the application's icon. This icon is included by the main resource
-    file SimpleGame.rc.
-
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named SimpleGame.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+Game structure is following:
+ SimpleGame.cpp - main file which contains all stuff to initialize windows, and create game loop,
+				  also it's handle user input
+ physics folder - contains developed by me physics library, which simulating throwing of the object
+	physics.h - main file of physics library, contains math for simulating behaviour of object
+	IPhysicsObject.h - interface for physicsObject
+ game folder - contains all files to realize game logic and draw game objects
+	gameObject.h - abstract class for all game objects
+	ball.h - realization ob ball in the game
+	scene.h - class that handles all drawing stuff for objects
+	game.h - core logic of the game

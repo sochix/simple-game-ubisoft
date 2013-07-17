@@ -16,7 +16,7 @@ public:
 	void SetInfo(int,int); //displays information, such as velocity and angle
 
 private:
-	void drawGrid(HDC hdc);
+	void drawFloor(HDC hdc);
 	void drawInfo(HDC hdc);
 
 private:	

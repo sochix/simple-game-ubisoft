@@ -224,6 +224,7 @@ DWORD WINAPI userInputThreadProc(HANDLE handle) {
  std::cout << "\t============= Throwing Simulator ===================" << std::endl;
  std::cout << "\t============= Writed by I. Pirozhenko ==============" << std::endl;
  std::cout << "\t====================  2013   =======================" << std::endl;
+ std::cout << "\t= To exit simply press red cross on top of window ==" << std::endl;
  while (true) {
 	unsigned int angle, velocity;
 	try {

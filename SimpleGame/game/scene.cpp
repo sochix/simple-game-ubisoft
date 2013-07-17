@@ -20,20 +20,20 @@ void Scene::AddObject(GameObject* obj) {
 }
 
 void Scene::Draw(HDC hdc) {
-	drawGrid(hdc);
-	drawInfo(hdc);
+	drawFloor(hdc);
 	for (auto it = objects->begin(); it != objects->end(); it++) {
 		(*it)->Draw(hdc);		
 	}
+	drawInfo(hdc);
 }
 
-void Scene::drawGrid(HDC hdc) {
+void Scene::drawFloor(HDC hdc) {
 	//TODO: extract brushes from this method to private members of class
 	RECT rct;
 	GetClientRect(hWnd, &rct);
 
-	COLORREF colOfAxis = RGB(0,0,0);
-	HPEN axisPen = CreatePen(2,4,colOfAxis); 
+	COLORREF colOfAxis = RGB(0,127,14);
+	HPEN axisPen = CreatePen(PS_DASH,8,colOfAxis); 
 	HGDIOBJ old = SelectObject(hdc, axisPen);
 
 	vector<POINT> xAxis(2);
@@ -41,12 +41,6 @@ void Scene::drawGrid(HDC hdc) {
 	xAxis[0].x = rct.left;
 	xAxis[1].x = rct.right;
 	Polyline(hdc, xAxis.data(), xAxis.size());
-
-	vector<POINT> yAxis(2);
-	yAxis[0].x = yAxis[1].x = 0;
-	yAxis[0].y = rct.top;
-	yAxis[1].y = rct.bottom;
-	Polyline(hdc, yAxis.data(), yAxis.size());
 
 	SelectObject(hdc, old);
 }
