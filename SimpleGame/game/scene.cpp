@@ -19,14 +19,14 @@ void Scene::AddObject(GameObject* obj) {
 }
 
 void Scene::Draw(HDC hdc) {
-	drawGrid(hdc);
+	//drawGrid(hdc);
 	for (auto it = objects->begin(); it != objects->end(); it++) {
 		(*it)->Draw(hdc);
-	/*	auto oldPos = (*it)->GetPosition();
+		auto oldPos = (*it)->GetPosition();
 		POINT newPos;
 		newPos.x = oldPos.x + 2;
 		newPos.y = oldPos.y + 2;
-		(*it)->SetPosition(newPos); */
+		(*it)->SetPosition(newPos); 
 	}
 }
 

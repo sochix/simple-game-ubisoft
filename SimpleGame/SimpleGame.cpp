@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include <Windows.h>
 #include "SimpleGame.h"
 #include "game.h"
 #include <vector>
@@ -14,8 +15,9 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
 // Global window handle
 HWND hWnd;
-
 Game* game;
+HANDLE hTickThread;
+
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
@@ -23,7 +25,7 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 void CreatePens(std::vector<HPEN>& gPens);
 void DisplayLines(HDC hdc);
-
+DWORD WINAPI tickThreadProc(HANDLE handle);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -49,21 +51,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SIMPLEGAME));
 
-	game = new Game(hWnd);
-	bool running = true;
-	// Main message loop:
-	
-	while (GetMessage(&msg, NULL, 0, 0))
-	{		
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+	//InvalidateRect(hWnd,NULL,TRUE);
+	hTickThread = CreateThread( NULL, NULL, &tickThreadProc, NULL, NULL, NULL );
+
+	while (GetMessage(&msg, NULL, 0, 0)) 
+	{
+		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-		}		
+		}
 	}
-		//InvalidateRect(hWnd,NULL,TRUE);
-	
-	
+
 
 	return (int) msg.wParam;
 }
@@ -168,13 +167,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
-	case WM_PAINT:
+	case WM_PAINT: 
 		hdc = BeginPaint(hWnd, &ps);
+		//drawing code goes in here
 		game->Draw(hdc);
 		EndPaint(hWnd, &ps);
 		break;
-	case WM_DESTROY:
+	case WM_DESTROY: {
+		TerminateThread( hTickThread, 0 );
 		PostQuitMessage(0);
+					 }
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -200,4 +202,30 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+
+
+DWORD WINAPI tickThreadProc(HANDLE handle) {
+  // Give plenty of time for main thread to finish setting up
+  Sleep( 50 );
+//  ShowWindow( hWnd, SW_SHOW );
+  // Retrieve the window's DC
+  //HDC hdc = GetDC( hwnd );
+  // Create DC with shared pixels to variable 'pixels'
+  //hdcMem = CreateCompatibleDC( hdc );
+  //HBITMAP hbmOld = (HBITMAP)SelectObject( hdcMem, hbmp );
+  // Milliseconds to wait each frame
+ game = new Game(hWnd);
+ int delay = 1000 / game->GetDesiredFPS();
+ while (true) {
+    // Do stuff with pixels
+	game->MainGameLoop();
+    // Draw pixels to window
+    //BitBlt( hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY );
+    // Wait
+    Sleep( delay );
+	// Sleep(100);
+  }
+  //SelectObject( hdcMem, hbmOld );
+  //DeleteDC( hdc );
 }

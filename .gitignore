@@ -29,3 +29,5 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 SimpleGame.sdf
 ipch/simplegame-f7b204f5/simplegame-a2f2ecf0.ipch
+ipch/*
+*.opensdf

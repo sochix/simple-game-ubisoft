@@ -14,3 +14,4 @@ void Ball::Draw(HDC hdc)
 	
 	SelectObject(hdc, old);
 }
+

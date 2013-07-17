@@ -5,8 +5,11 @@
 
 class Game {
 public:
-	Game(HWND hWnd);
+	Game(HWND);
 	void Draw(HDC hdc);
+	void MainGameLoop();
+	short int GetDesiredFPS() const;
 private:
 	Scene* scene;
+	HWND hWnd;
 };
