@@ -10,12 +10,14 @@ public:
 	~Scene();
 	void Draw(HDC hdc);
 	void AddObject(GameObject * const);
+	void SetInfo(int,int);
 
 private:
 	void drawGrid(HDC hdc);
-	void CreatePens(std::vector<HPEN>& gPens);
-	
+	void drawInfo(HDC hdc);
+
 private:	
 	std::vector<GameObject*>* objects;
+	std::wstring infString;
 	HWND hWnd;
 };

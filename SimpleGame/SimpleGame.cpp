@@ -28,8 +28,6 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-void CreatePens(std::vector<HPEN>& gPens);
-void DisplayLines(HDC hdc);
 DWORD WINAPI tickThreadProc(HANDLE handle);
 DWORD WINAPI userInputThreadProc(HANDLE handle);
 void ForwardOutputToConsoleWindow();
@@ -57,24 +55,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SIMPLEGAME));
-	 game = new Game(hWnd);
-	 ForwardOutputToConsoleWindow();
-	//InvalidateRect(hWnd,NULL,TRUE);
+	game = new Game(hWnd);
+	ForwardOutputToConsoleWindow();
 	hTickThread = CreateThread( NULL, NULL, &tickThreadProc, NULL, NULL, NULL );
 	hUserInputThread = CreateThread(NULL, NULL, &userInputThreadProc, NULL, NULL, NULL);
-	//ShowWindow(GetConsoleWindow(), SW_OTHERZOOM);	
 
 	while (GetMessage(&msg, NULL, 0, 0)) 
 	{
-		
-
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 	}
-
 
 	return (int) msg.wParam;
 }
@@ -128,9 +121,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
-
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+  
+   hWnd = CreateWindow(szWindowClass, szTitle,(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX),
+      0, 0, 400, 400, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {
@@ -257,13 +250,12 @@ void ForwardOutputToConsoleWindow() {
 }
 
 DWORD WINAPI userInputThreadProc(HANDLE handle) {
-	
  while (true) {
 	int angle, velocity;
-	std::cout << "Please enter angle:" << std::endl;
-	std::cin >> angle ;
 	std::cout << "Please enter velocity:" << std::endl;
 	std::cin >> velocity;
+	std::cout << "Please enter angle:" << std::endl;
+	std::cin >> angle;
 	game->StartSimulation(velocity, angle);
  }
 }

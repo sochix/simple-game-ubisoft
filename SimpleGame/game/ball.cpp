@@ -22,7 +22,3 @@ int Ball::GetWidth() const {
 int Ball::GetHeight() const {
 	return DIAMETR;
 }
-
-double Ball::GetMass() const {
-	return 20;
-}

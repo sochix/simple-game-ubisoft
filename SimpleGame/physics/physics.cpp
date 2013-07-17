@@ -24,8 +24,6 @@ void Physics::doCollisionDetection() {
 	for (auto it = objects.begin(); it != objects.end(); it++) {
 		auto object = (*it);
 		auto position = object->GetPosition();
-		auto velocity = object->GetVelocity();
-
 		POINT newPos(position);
 		
 		//TODO: change velocity too
