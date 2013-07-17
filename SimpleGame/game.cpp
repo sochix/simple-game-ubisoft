@@ -1,8 +1,9 @@
 #include "stdafx.h"
-
+#include <iostream>
 #include "game.h"
 #include "game\ball.h"
 
+using namespace std;
 
 Game::Game(HWND hWnd_):
 hWnd(hWnd_) {
@@ -16,12 +17,11 @@ hWnd(hWnd_) {
 	ballPosition.x = 0;
 	ballPosition.y = 340;
 	
-	auto ball = new Ball();
+	ball = new Ball();
 	ball->SetPosition(ballPosition);
 
 	scene->AddObject(ball);
 	physics->AddObject(ball);
-	physics->Simulate(ball, 45, 45);
 }
 
 Game::~Game() {
@@ -40,4 +40,12 @@ void Game::MainGameLoop() {
 
 short int Game::GetDesiredFPS() const {
 	return 50;
+}
+
+void Game::StartSimulation(int velocity, int angle) {
+	POINT ballPosition;
+	ballPosition.x = 0;
+	ballPosition.y = 340;
+	ball->SetPosition(ballPosition);
+	physics->Simulate(ball, velocity, angle);
 }

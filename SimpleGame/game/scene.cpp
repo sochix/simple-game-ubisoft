@@ -19,7 +19,7 @@ void Scene::AddObject(GameObject* obj) {
 }
 
 void Scene::Draw(HDC hdc) {
-	//drawGrid(hdc);
+	drawGrid(hdc);
 	for (auto it = objects->begin(); it != objects->end(); it++) {
 		(*it)->Draw(hdc);		
 	}
@@ -36,7 +36,7 @@ void Scene::drawGrid(HDC hdc) {
 	HPEN gridPen = CreatePen(2,1,col); //TODO: do proper style
 
 	HGDIOBJ old = SelectObject(hdc, gridPen);
-	 
+/*	 
 	vector<POINT> horizGrid(2);
 	for (int i=rct.top; i < rct.bottom; i+=20) {
 		horizGrid[0].y = horizGrid[1].y = i;
@@ -54,7 +54,7 @@ void Scene::drawGrid(HDC hdc) {
 
 		Polyline(hdc, vertGrid.data(), vertGrid.size());
 	}
-
+	*/
 	COLORREF colOfAxis = RGB(0,0,0);
 	HPEN axisPen = CreatePen(2,4,colOfAxis); //TODO: do proper style
 	SelectObject(hdc, axisPen);

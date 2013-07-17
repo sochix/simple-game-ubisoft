@@ -6,6 +6,11 @@
 #include "SimpleGame.h"
 #include "game.h"
 #include <vector>
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
+#include <iostream>
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -16,7 +21,7 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 // Global window handle
 HWND hWnd;
 Game* game;
-HANDLE hTickThread;
+HANDLE hTickThread, hUserInputThread;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -26,6 +31,8 @@ INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 void CreatePens(std::vector<HPEN>& gPens);
 void DisplayLines(HDC hdc);
 DWORD WINAPI tickThreadProc(HANDLE handle);
+DWORD WINAPI userInputThreadProc(HANDLE handle);
+void ForwardOutputToConsoleWindow();
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -50,12 +57,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SIMPLEGAME));
-
+	 game = new Game(hWnd);
+	 ForwardOutputToConsoleWindow();
 	//InvalidateRect(hWnd,NULL,TRUE);
 	hTickThread = CreateThread( NULL, NULL, &tickThreadProc, NULL, NULL, NULL );
+	hUserInputThread = CreateThread(NULL, NULL, &userInputThreadProc, NULL, NULL, NULL);
+	//ShowWindow(GetConsoleWindow(), SW_OTHERZOOM);	
 
 	while (GetMessage(&msg, NULL, 0, 0)) 
 	{
+		
+
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
 		{
 			TranslateMessage(&msg);
@@ -115,8 +127,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   //HWND hWnd;
-
    hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
@@ -175,6 +185,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DESTROY: {
 		TerminateThread( hTickThread, 0 );
+		TerminateThread( hUserInputThread, 0);
 		PostQuitMessage(0);
 					 }
 		break;
@@ -215,7 +226,6 @@ DWORD WINAPI tickThreadProc(HANDLE handle) {
   //hdcMem = CreateCompatibleDC( hdc );
   //HBITMAP hbmOld = (HBITMAP)SelectObject( hdcMem, hbmp );
   // Milliseconds to wait each frame
- game = new Game(hWnd);
  int delay = 1000 / game->GetDesiredFPS();
  while (true) {
     // Do stuff with pixels
@@ -228,4 +238,32 @@ DWORD WINAPI tickThreadProc(HANDLE handle) {
   }
   //SelectObject( hdcMem, hbmOld );
   //DeleteDC( hdc );
+}
+
+void ForwardOutputToConsoleWindow() {
+	AllocConsole();
+
+    HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+    int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
+    FILE* hf_out = _fdopen(hCrt, "w");
+    setvbuf(hf_out, NULL, _IONBF, 1);
+    *stdout = *hf_out;
+
+    HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
+    hCrt = _open_osfhandle((long) handle_in, _O_TEXT);
+    FILE* hf_in = _fdopen(hCrt, "r");
+    setvbuf(hf_in, NULL, _IONBF, 128);
+    *stdin = *hf_in;
+}
+
+DWORD WINAPI userInputThreadProc(HANDLE handle) {
+	
+ while (true) {
+	int angle, velocity;
+	std::cout << "Please enter angle:" << std::endl;
+	std::cin >> angle ;
+	std::cout << "Please enter velocity:" << std::endl;
+	std::cin >> velocity;
+	game->StartSimulation(velocity, angle);
+ }
 }
