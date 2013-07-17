@@ -10,6 +10,7 @@
 #include <io.h>
 #include <fcntl.h>
 #include <iostream>
+#include <string>
 
 #define MAX_LOADSTRING 100
 
@@ -180,7 +181,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		TerminateThread( hTickThread, 0 );
 		TerminateThread( hUserInputThread, 0);
 		PostQuitMessage(0);
-					 }
+		}
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -210,27 +211,12 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 DWORD WINAPI tickThreadProc(HANDLE handle) {
-  // Give plenty of time for main thread to finish setting up
-  Sleep( 50 );
-//  ShowWindow( hWnd, SW_SHOW );
-  // Retrieve the window's DC
-  //HDC hdc = GetDC( hwnd );
-  // Create DC with shared pixels to variable 'pixels'
-  //hdcMem = CreateCompatibleDC( hdc );
-  //HBITMAP hbmOld = (HBITMAP)SelectObject( hdcMem, hbmp );
   // Milliseconds to wait each frame
  int delay = 1000 / game->GetDesiredFPS();
  while (true) {
-    // Do stuff with pixels
 	game->MainGameLoop();
-    // Draw pixels to window
-    //BitBlt( hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY );
-    // Wait
     Sleep( delay );
-	// Sleep(100);
   }
-  //SelectObject( hdcMem, hbmOld );
-  //DeleteDC( hdc );
 }
 
 void ForwardOutputToConsoleWindow() {
@@ -250,12 +236,36 @@ void ForwardOutputToConsoleWindow() {
 }
 
 DWORD WINAPI userInputThreadProc(HANDLE handle) {
+ using namespace std;
+ std::cout << "\t============= Throwing Simulator ===================" << std::endl;
+ std::cout << "\t============= Writed by I. Pirozhenko ==============" << std::endl;
+ std::cout << "\t====================  2013   =======================" << std::endl;
  while (true) {
-	int angle, velocity;
-	std::cout << "Please enter velocity:" << std::endl;
-	std::cin >> velocity;
-	std::cout << "Please enter angle:" << std::endl;
-	std::cin >> angle;
+	unsigned int angle, velocity;
+	try {
+		std::cout << std::endl;
+		std::cout << "Velocity(bigger than 0): ";
+		std::cin >> velocity;
+				
+		if (velocity <= 0) 
+			throw "Velocity can't be lower zero!";
+
+		std::cout << "Angle(from 0 to 90 degrees): ";
+		std::cin >> angle;
+
+		if (angle < 0 || angle > 90) 
+			throw "Angle must be betwee 0 and 90!";
+			
+		if (cin.fail()) 
+			throw "Seems like it's not a number";
+		cin.clear();
+		cin.get();
+	} catch (char* error) {
+		cout << error << endl;
+		cin.clear();
+		std::cin.ignore(20,'\n');
+		continue;
+	}
 	game->StartSimulation(velocity, angle);
  }
 }

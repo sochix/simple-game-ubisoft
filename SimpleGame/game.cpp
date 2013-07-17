@@ -46,12 +46,12 @@ short int Game::GetDesiredFPS() const {
 
 void Game::StartSimulation(int velocity, int angle) {
 	ball->SetPosition(ballPosition);
+	ball->ClearTail();
 	scene->SetInfo(velocity, angle);
 	physics->Simulate(ball, velocity, angle);
 }
 
-DWORD Game::physicsThreadProc(void)
-{
+DWORD Game::physicsThreadProc(void) {
 	int delay = 1000 / GetDesiredFPS();
     while (true) { 
 		physics->PhysicsStep();
@@ -59,8 +59,7 @@ DWORD Game::physicsThreadProc(void)
 	}
 }
 
-DWORD WINAPI Game::physicsThreadStart(void* Param)
-{
+DWORD WINAPI Game::physicsThreadStart(void* Param) {
     Game* This = (Game*) Param;
 	return This->physicsThreadProc();
 }
