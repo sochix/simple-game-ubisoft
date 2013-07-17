@@ -37,7 +37,7 @@ void Game::Draw(HDC hdc) {
 }
 
 void Game::MainGameLoop() {
-	InvalidateRect(hWnd,NULL,TRUE);	
+	InvalidateRect(hWnd,NULL,TRUE);	//send request to redraw whole client area
 }
 
 short int Game::GetDesiredFPS() const {

@@ -3,8 +3,9 @@
 #include <vector>
 #include <WinDef.h>
 
-typedef POINT VECTOR;
-
+/*
+* Struct which contains params needed to simulate throwing ob object
+*/
 struct SimulateParams {
 	double angle;
 	int velocity;
@@ -12,18 +13,22 @@ struct SimulateParams {
 	IPhysicsObject* obj;
 };
 
+/*
+* Class which represent simple Physics library
+*/
 class Physics{
 public:
 	Physics(double, RECT);
-	void PhysicsStep();
-	void AddObject(IPhysicsObject*);
-	void Simulate(IPhysicsObject* obj, int velocity, int angle);
+	void PhysicsStep(); //should be called in cycle for updating physics in world
+	void AddObject(IPhysicsObject*); //add object to world
+	void Simulate(IPhysicsObject* obj, int velocity, int angle); //simulate object throwing
 
 private:
 	void doCollisionDetection();
 	void doSimulateStep();
 	void startSimulate();
 	void stopSimulate();
+
 private:
 	std::vector<IPhysicsObject*> objects;
 	std::vector<SimulateParams*> objectsToSimulate;

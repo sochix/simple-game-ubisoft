@@ -4,13 +4,16 @@
 #include <WinDef.h>
 #include "gameObject.h"
 
+/*
+* Class which handle all drawable objects in the game
+*/
 class Scene {
 public:
 	Scene(HWND);
 	~Scene();
 	void Draw(HDC hdc);
 	void AddObject(GameObject * const);
-	void SetInfo(int,int);
+	void SetInfo(int,int); //displays information, such as velocity and angle
 
 private:
 	void drawGrid(HDC hdc);

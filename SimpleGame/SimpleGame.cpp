@@ -29,9 +29,9 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-DWORD WINAPI tickThreadProc(HANDLE handle);
-DWORD WINAPI userInputThreadProc(HANDLE handle);
-void ForwardOutputToConsoleWindow();
+DWORD WINAPI tickThreadProc(HANDLE handle); //thread for handling gameLoop
+DWORD WINAPI userInputThreadProc(HANDLE handle); //thread for handling userInput
+void ForwardOutputToConsoleWindow(); //function to forward cin & cout to console window
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -56,6 +56,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SIMPLEGAME));
+
 	game = new Game(hWnd);
 	ForwardOutputToConsoleWindow();
 	hTickThread = CreateThread( NULL, NULL, &tickThreadProc, NULL, NULL, NULL );
@@ -72,8 +73,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	return (int) msg.wParam;
 }
-
-
 
 //
 //  FUNCTION: MyRegisterClass()
@@ -173,13 +172,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT: 
 		hdc = BeginPaint(hWnd, &ps);
-		//drawing code goes in here
 		game->Draw(hdc);
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY: {
 		TerminateThread( hTickThread, 0 );
 		TerminateThread( hUserInputThread, 0);
+		delete game;
 		PostQuitMessage(0);
 		}
 		break;
@@ -209,7 +208,7 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	return (INT_PTR)FALSE;
 }
 
-
+//Thread for main gameLoop
 DWORD WINAPI tickThreadProc(HANDLE handle) {
   // Milliseconds to wait each frame
  int delay = 1000 / game->GetDesiredFPS();
@@ -219,22 +218,7 @@ DWORD WINAPI tickThreadProc(HANDLE handle) {
   }
 }
 
-void ForwardOutputToConsoleWindow() {
-	AllocConsole();
-
-    HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-    int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
-    FILE* hf_out = _fdopen(hCrt, "w");
-    setvbuf(hf_out, NULL, _IONBF, 1);
-    *stdout = *hf_out;
-
-    HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
-    hCrt = _open_osfhandle((long) handle_in, _O_TEXT);
-    FILE* hf_in = _fdopen(hCrt, "r");
-    setvbuf(hf_in, NULL, _IONBF, 128);
-    *stdin = *hf_in;
-}
-
+//Thread for handling and validation of user input
 DWORD WINAPI userInputThreadProc(HANDLE handle) {
  using namespace std;
  std::cout << "\t============= Throwing Simulator ===================" << std::endl;
@@ -268,4 +252,21 @@ DWORD WINAPI userInputThreadProc(HANDLE handle) {
 	}
 	game->StartSimulation(velocity, angle);
  }
+}
+
+//TODO: should be moved to tools
+void ForwardOutputToConsoleWindow() {
+	AllocConsole();
+
+    HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+    int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
+    FILE* hf_out = _fdopen(hCrt, "w");
+    setvbuf(hf_out, NULL, _IONBF, 1);
+    *stdout = *hf_out;
+
+    HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
+    hCrt = _open_osfhandle((long) handle_in, _O_TEXT);
+    FILE* hf_in = _fdopen(hCrt, "r");
+    setvbuf(hf_in, NULL, _IONBF, 128);
+    *stdin = *hf_in;
 }

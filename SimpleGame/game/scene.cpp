@@ -28,12 +28,12 @@ void Scene::Draw(HDC hdc) {
 }
 
 void Scene::drawGrid(HDC hdc) {
-	
+	//TODO: extract brushes from this method to private members of class
 	RECT rct;
 	GetClientRect(hWnd, &rct);
 
 	COLORREF colOfAxis = RGB(0,0,0);
-	HPEN axisPen = CreatePen(2,4,colOfAxis); //TODO: do proper style
+	HPEN axisPen = CreatePen(2,4,colOfAxis); 
 	HGDIOBJ old = SelectObject(hdc, axisPen);
 
 	vector<POINT> xAxis(2);
@@ -56,7 +56,7 @@ void Scene::drawInfo(HDC hdc) {
 	GetClientRect(hWnd, &rct);
 
 	COLORREF colOfAxis = RGB(0,0,0);
-	HPEN axisPen = CreatePen(2,4,colOfAxis); //TODO: do proper style
+	HPEN axisPen = CreatePen(2,4,colOfAxis);
 	HGDIOBJ old = SelectObject(hdc, axisPen);
 	
 	TextOut(hdc, rct.left+4, rct.top, infString.c_str() ,infString.size());

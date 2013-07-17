@@ -2,9 +2,9 @@
 #include "physics.h"
 #include <math.h>
 
-const double Physics::PI = 3.14;
-double Physics::time = 0;
-bool Physics::running = false;
+const	double	Physics::PI			= 3.14;
+		double	Physics::time		= 0;
+		bool	Physics::running	= false;
 
 Physics::Physics(double gravity_, RECT world_):
 gravity(gravity_),
@@ -26,7 +26,7 @@ void Physics::doCollisionDetection() {
 		auto position = object->GetPosition();
 		POINT newPos(position);
 		
-		//TODO: change velocity too
+		//below code for checking collisions betwee each bound of the world and object
 		if (position.y + object->GetHeight() >= world.bottom) {
 			newPos.y = world.bottom - object->GetHeight();
 			stopSimulate();
@@ -46,6 +46,7 @@ void Physics::doCollisionDetection() {
 			newPos.x = world.left;
 			stopSimulate();
 		}
+
 		object->SetPosition(newPos);
 	}
 }
@@ -55,7 +56,6 @@ void Physics::AddObject(IPhysicsObject* obj) {
 }
 
 void Physics::Simulate(IPhysicsObject* obj, int velocity, int angle) {
-
 	SimulateParams* params = new SimulateParams();
 	params->angle = angle * PI / 180.f;
 	params->velocity = velocity;

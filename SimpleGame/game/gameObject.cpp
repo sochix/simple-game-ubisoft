@@ -11,6 +11,7 @@ GameObject::~GameObject() {
 POINT GameObject::GetPosition() const {
 	return position;
 }
+
 void GameObject::SetPosition(POINT p) {
 	position = p;
 }

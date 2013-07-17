@@ -5,12 +5,15 @@
 #include "physics\physics.h"
 #include "game\ball.h"
 
+/*
+* Main class which represents game, and contains all game objects and logic
+*/
 class Game {
 public:
 	Game(HWND);
 	~Game();
 	void Draw(HDC hdc);
-	void MainGameLoop();
+	void MainGameLoop(); //send requests to update window
 	void StartSimulation(int velocity, int angle);
 	short int GetDesiredFPS() const;
 	

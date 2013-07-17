@@ -16,7 +16,7 @@ void Ball::Draw(HDC hdc)
 
 void Ball::drawBall(HDC hdc) {
 	RECT rct;
-	HBRUSH blueBrush = CreateSolidBrush(RGB(0,255,0));
+	HBRUSH blueBrush = CreateSolidBrush(RGB(0,0,255));
 	HGDIOBJ old = SelectObject(hdc, blueBrush);
 	
 	Ellipse( hdc, GetPosition().x, GetPosition().y, GetPosition().x + DIAMETR, GetPosition().y + DIAMETR);
