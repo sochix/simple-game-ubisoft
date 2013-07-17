@@ -13,20 +13,23 @@ hWnd(hWnd_) {
 	scene = new Scene(hWnd);
 	physics = new Physics(9.8, world);
 
-	POINT ballPosition;
-	ballPosition.x = 0;
-	ballPosition.y = 340;
-	
 	ball = new Ball();
+
+	ballPosition.x = EPS;
+	ballPosition.y = world.bottom - ball->GetHeight() - EPS;
 	ball->SetPosition(ballPosition);
 
 	scene->AddObject(ball);
 	physics->AddObject(ball);
+
+	hPhysicsThread = CreateThread(NULL, 0, &physicsThreadStart, (void*) this, 0, NULL);
 }
 
 Game::~Game() {
+	TerminateThread( hPhysicsThread, 0 );
 	delete scene;
 	delete physics;
+	delete ball;
 }
 
 void Game::Draw(HDC hdc) {
@@ -35,7 +38,6 @@ void Game::Draw(HDC hdc) {
 
 void Game::MainGameLoop() {
 	InvalidateRect(hWnd,NULL,TRUE);	
-	physics->PhysicsStep();
 }
 
 short int Game::GetDesiredFPS() const {
@@ -43,9 +45,22 @@ short int Game::GetDesiredFPS() const {
 }
 
 void Game::StartSimulation(int velocity, int angle) {
-	POINT ballPosition;
-	ballPosition.x = 0;
-	ballPosition.y = 340;
 	ball->SetPosition(ballPosition);
+	scene->SetInfo(velocity, angle);
 	physics->Simulate(ball, velocity, angle);
+}
+
+DWORD Game::physicsThreadProc(void)
+{
+	int delay = 1000 / GetDesiredFPS();
+    while (true) { 
+		physics->PhysicsStep();
+		Sleep(delay);
+	}
+}
+
+DWORD WINAPI Game::physicsThreadStart(void* Param)
+{
+    Game* This = (Game*) Param;
+	return This->physicsThreadProc();
 }
